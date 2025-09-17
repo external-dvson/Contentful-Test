@@ -1,9 +1,4 @@
-using Contentful.Core;
-using ContentfulApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ContentfulApi.Controllers;
 
@@ -11,11 +6,11 @@ namespace ContentfulApi.Controllers;
 [Route("api/[controller]")]
 public class ProductsController : ControllerBase
 {
-    private readonly IContentfulClient _contentfulClient;
+    private readonly IProductService _productService;
 
-    public ProductsController(IContentfulClient contentfulClient)
+    public ProductsController(IProductService productService)
     {
-        _contentfulClient = contentfulClient;
+        _productService = productService;
     }
 
     [HttpGet]
@@ -23,25 +18,20 @@ public class ProductsController : ControllerBase
     {
         try
         {
-            var builder = new Contentful.Core.Search.QueryBuilder<Product>()
-                .ContentTypeIs("testProduct");
-                
-            var products = await _contentfulClient.GetEntries(builder);
+            var products = await _productService.GetAllProductsAsync();
             
-            // Chuyển đổi sản phẩm để đảm bảo cung cấp URL hình ảnh đúng
-            var simplifiedProducts = products.Items.Select(p => new
+            var simplifiedProducts = products.Select(p => new
             {
                 p.Sys,
                 p.ProductName,
                 p.Price,
-                ProductImage = p.ProductImageUrl // Sử dụng property đã tạo
+                ProductImage = p.ProductImageUrl
             }).ToList();
             
             return Ok(simplifiedProducts);
         }
         catch (Exception ex)
         {
-            // Log chi tiết lỗi
             Console.WriteLine($"Error getting products: {ex.Message}");
             Console.WriteLine($"Stack trace: {ex.StackTrace}");
             return StatusCode(500, $"Internal server error: {ex.Message}");
@@ -53,11 +43,10 @@ public class ProductsController : ControllerBase
     {
         try
         {
-            var product = await _contentfulClient.GetEntry<Product>(id);
+            var product = await _productService.GetProductByIdAsync(id);
             if (product == null)
                 return NotFound();
 
-            // Chuyển đổi tương tự như trên
             var simplifiedProduct = new
             {
                 product.Sys,
