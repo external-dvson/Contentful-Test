@@ -1,0 +1,45 @@
+# Root-level .gitignore for the entire project
+
+# IDE files
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Temporary files
+*.swp
+*.swo
+*~
+Thumbs.db
+
+# Local configuration
+.env
+.env.local
+.env.development
+.env.production
+
+# Contentful API keys
+contentful-management.json
+
+# Logs
+*.log
+logs/
+
+# Windows shortcuts
+*.lnk
+
+# macOS specific
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Node.js diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Backend and Frontend have their own specific .gitignore files
+# For more specific rules, see backend/.gitignore and frontend/contentful-app/.gitignore
