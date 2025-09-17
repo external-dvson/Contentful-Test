@@ -1,6 +1,3 @@
-using Contentful.Core;
-using Contentful.Core.Configuration;
-using ContentfulApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContentfulApi.Controllers;
@@ -9,11 +6,11 @@ namespace ContentfulApi.Controllers;
 [Route("api/[controller]")]
 public class BlogPostsController : ControllerBase
 {
-    private readonly IContentfulClient _contentfulClient;
+    private readonly IBlogService _blogService;
 
-    public BlogPostsController(IContentfulClient contentfulClient)
+    public BlogPostsController(IBlogService blogService)
     {
-        _contentfulClient = contentfulClient;
+        _blogService = blogService;
     }
 
     [HttpGet]
@@ -21,10 +18,9 @@ public class BlogPostsController : ControllerBase
     {
         try
         {
-            var posts = await _contentfulClient.GetEntries<BlogPost>();
-            
-            // Ensure proper image URL mapping
-            var mappedPosts = posts.Items.Select(post => new
+            var posts = await _blogService.GetAllBlogPostsAsync();
+
+            var mappedPosts = posts.Select(post => new
             {
                 post.Sys,
                 post.Title,
@@ -51,11 +47,10 @@ public class BlogPostsController : ControllerBase
     {
         try
         {
-            var post = await _contentfulClient.GetEntry<BlogPost>(id);
+            var post = await _blogService.GetBlogPostByIdAsync(id);
             if (post == null)
                 return NotFound();
 
-            // Ensure proper image URL mapping
             var mappedPost = new
             {
                 post.Sys,

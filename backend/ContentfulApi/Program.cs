@@ -1,4 +1,5 @@
 using Contentful.AspNetCore;
+using ContentfulApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,10 @@ builder.Services.AddSwaggerGen();
 
 // Add Contentful service
 builder.Services.AddContentful(builder.Configuration);
+
+// Register application services
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IBlogService, BlogService>();
 
 // Add CORS
 builder.Services.AddCors(options =>
