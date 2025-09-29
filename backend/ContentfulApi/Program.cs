@@ -1,12 +1,13 @@
 using Contentful.AspNetCore;
 using ContentfulApi;
+using ContentfulApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAuthorization();
 
 // Add Contentful service
 builder.Services.AddContentful(builder.Configuration);
@@ -40,6 +41,8 @@ app.UseCors("AllowReactApp");
 
 app.UseAuthorization();
 
-app.MapControllers();
+// Map minimal API endpoints
+app.MapProductEndpoints();
+app.MapBlogPostEndpoints();
 
 app.Run();
